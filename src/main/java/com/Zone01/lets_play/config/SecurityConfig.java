@@ -107,16 +107,25 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
         http
+            .securityMatcher("/**")
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login", "/register", "/auth/register").permitAll()
+                .requestMatchers("/", "/login", "/register", "/auth/register", "/css/**", "/js/**", "/static/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
+                .loginProcessingUrl("/login")
                 .usernameParameter("email")
+                .passwordParameter("password")
+                .defaultSuccessUrl("/", true)
+                .failureUrl("/login?error=true")
                 .permitAll()
             )
-            .logout(LogoutConfigurer::permitAll);
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login?logout=true")
+                .permitAll()
+            );
         return http.build();
     }
 }

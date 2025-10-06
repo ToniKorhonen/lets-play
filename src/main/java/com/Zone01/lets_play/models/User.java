@@ -21,11 +21,11 @@ public class User {
     @Indexed(unique = true)
     private String email;
 
-    @Size(min = 8, message = "Password must be at least 8 characters long")
-    @Pattern(
-            regexp = "^(?=.*[0-9])(?=.*[!@#$%^&*]).*$",
-            message = "Password must contain at least one number and one special character"
-    )
+//    @Size(min = 8, message = "Password must be at least 8 characters long")
+//    @Pattern(
+//            regexp = "^(?=.*[0-9])(?=.*[!@#$%^&*]).*$",
+//            message = "Password must contain at least one number and one special character"
+//    )
     private String password;
 
     private String role;

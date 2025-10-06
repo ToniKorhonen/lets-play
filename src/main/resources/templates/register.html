@@ -11,6 +11,7 @@
 <div th:if="${errorMessage}" th:text="${errorMessage}" style="color:#b30000; font-weight:bold;"></div>
 
 <form method="post" action="/auth/register" th:object="${user}">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
     <div>
         <label>Name</label><br/>
         <input type="text" th:field="*{name}" placeholder="Your name" />
