@@ -19,6 +19,7 @@ public class ProductDtos {
             String name,
             String description,
             double price,
-            String userId
+            String userId,
+            String ownerName
     ) {}
 }

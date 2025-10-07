@@ -1,10 +1,12 @@
 package com.Zone01.lets_play.service;
 
 import com.Zone01.lets_play.Mongo_repisitory.ProductRepository;
+import com.Zone01.lets_play.Mongo_repisitory.UserRepository;
 import com.Zone01.lets_play.dto.ProductDtos.*;
 import com.Zone01.lets_play.exception.ProductNotFoundException;
 import com.Zone01.lets_play.exception.AccessDeniedBusinessException;
 import com.Zone01.lets_play.models.Product;
+import com.Zone01.lets_play.models.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -12,9 +14,11 @@ import java.util.List;
 @Service
 public class ProductService {
     private final ProductRepository repo;
+    private final UserRepository userRepo;
 
-    public ProductService(ProductRepository repo) {
+    public ProductService(ProductRepository repo, UserRepository userRepo) {
         this.repo = repo;
+        this.userRepo = userRepo;
     }
 
     @Transactional
@@ -65,7 +69,14 @@ public class ProductService {
     }
 
     private ProductResponse toResponse(Product p) {
-        return new ProductResponse(p.getId(), p.getName(), p.getDescription(), p.getPrice(), p.getUserId());
+        String ownerName = "Unknown";
+        if (p.getUserId() != null) {
+            User owner = userRepo.findByEmail(p.getUserId());
+            if (owner != null && owner.getName() != null) {
+                ownerName = owner.getName();
+            }
+        }
+        return new ProductResponse(p.getId(), p.getName(), p.getDescription(), p.getPrice(), p.getUserId(), ownerName);
     }
 
     private String s(String v) {
