@@ -4,6 +4,7 @@ import com.Zone01.lets_play.Mongo_repisitory.UserRepository;
 import com.Zone01.lets_play.dto.UserDtos.*;
 import com.Zone01.lets_play.exception.*;
 import com.Zone01.lets_play.models.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,9 +12,11 @@ import java.util.List;
 
 @Service
 public class UserService {
+
     private final UserRepository repo;
     private final PasswordEncoder encoder;
 
+    @Autowired
     public UserService(UserRepository repo, PasswordEncoder encoder) {
         this.repo = repo;
         this.encoder = encoder;

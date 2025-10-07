@@ -7,15 +7,18 @@ import com.Zone01.lets_play.exception.ProductNotFoundException;
 import com.Zone01.lets_play.exception.AccessDeniedBusinessException;
 import com.Zone01.lets_play.models.Product;
 import com.Zone01.lets_play.models.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
 public class ProductService {
+
     private final ProductRepository repo;
     private final UserRepository userRepo;
 
+    @Autowired
     public ProductService(ProductRepository repo, UserRepository userRepo) {
         this.repo = repo;
         this.userRepo = userRepo;

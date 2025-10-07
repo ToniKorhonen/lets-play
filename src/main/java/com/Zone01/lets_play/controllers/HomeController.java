@@ -3,6 +3,7 @@ package com.Zone01.lets_play.controllers;
 import com.Zone01.lets_play.Mongo_repisitory.UserRepository;
 import com.Zone01.lets_play.models.User;
 import com.Zone01.lets_play.security.JwtService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
@@ -19,6 +20,7 @@ public class HomeController {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
+    @Autowired
     public HomeController(UserRepository userRepository, JwtService jwtService) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;

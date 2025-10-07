@@ -3,6 +3,7 @@ package com.Zone01.lets_play.controllers;
 import com.Zone01.lets_play.dto.UserDtos.*;
 import com.Zone01.lets_play.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -15,6 +16,7 @@ public class UserRestController {
 
     private final UserService service;
 
+    @Autowired
     public UserRestController(UserService service) {
         this.service = service;
     }

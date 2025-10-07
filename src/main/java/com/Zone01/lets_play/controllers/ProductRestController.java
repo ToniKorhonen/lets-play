@@ -3,6 +3,7 @@ package com.Zone01.lets_play.controllers;
 import com.Zone01.lets_play.dto.ProductDtos.*;
 import com.Zone01.lets_play.service.ProductService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.util.List;
 public class ProductRestController {
     private final ProductService service;
 
+    @Autowired
     public ProductRestController(ProductService service) {
         this.service = service;
     }
