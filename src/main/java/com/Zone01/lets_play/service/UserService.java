@@ -1,6 +1,7 @@
 package com.Zone01.lets_play.service;
 
 import com.Zone01.lets_play.Mongo_repisitory.UserRepository;
+import com.Zone01.lets_play.Mongo_repisitory.ProductRepository;
 import com.Zone01.lets_play.dto.UserDtos.*;
 import com.Zone01.lets_play.exception.*;
 import com.Zone01.lets_play.models.User;
@@ -12,10 +13,12 @@ import java.util.List;
 @Service
 public class UserService {
     private final UserRepository repo;
+    private final ProductRepository productRepo;
     private final PasswordEncoder encoder;
 
-    public UserService(UserRepository repo, PasswordEncoder encoder) {
+    public UserService(UserRepository repo, ProductRepository productRepo, PasswordEncoder encoder) {
         this.repo = repo;
+        this.productRepo = productRepo;
         this.encoder = encoder;
     }
 
@@ -60,7 +63,19 @@ public class UserService {
     @Transactional
     public void delete(String id) {
         User u = find(id);
+        // DELETE CASCADE - supprimer tous les produits de l'utilisateur
+        productRepo.findByUserId(u.getEmail()).forEach(productRepo::delete);
+        // Puis supprimer l'utilisateur
         repo.delete(u);
+    }
+
+    public boolean isCurrentUser(String userId, org.springframework.security.core.Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return false;
+        }
+        User user = find(userId);
+        String currentUserEmail = authentication.getName();
+        return user.getEmail().equals(currentUserEmail);
     }
 
     private User find(String id) {

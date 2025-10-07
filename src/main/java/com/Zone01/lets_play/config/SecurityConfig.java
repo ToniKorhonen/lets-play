@@ -90,7 +90,8 @@ public class SecurityConfig {
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/users").hasRole("ADMIN")
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/users/*").hasRole("ADMIN")
                 .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/users/*").hasRole("ADMIN")
-                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/users/*").hasRole("ADMIN")
+                // DELETE users - permettre aux utilisateurs authentifiés (le contrôleur vérifie si c'est le bon utilisateur)
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/users/*").authenticated()
 
                 // Authenticated user endpoints
                 .requestMatchers("/api/products/**").authenticated()

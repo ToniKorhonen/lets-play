@@ -4,8 +4,6 @@ import com.Zone01.lets_play.dto.UserDtos.*;
 import com.Zone01.lets_play.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -25,33 +23,23 @@ public class UserRestController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> list() {
         return service.list();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse get(@PathVariable String id) {
         return service.get(id);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse update(@PathVariable String id,
-                               @Valid @RequestBody UpdateUserRequest req,
-                               Authentication auth) {
-        boolean isAdmin = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-        return service.update(id, req, isAdmin);
+                               @Valid @RequestBody UpdateUserRequest req) {
+        return service.update(id, req, true);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> delete(@PathVariable String id, Authentication auth) {
-        boolean isAdmin = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-        if (!isAdmin) {
-            return ResponseEntity.status(403).build();
-        }
+    public ResponseEntity<Void> delete(@PathVariable String id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
