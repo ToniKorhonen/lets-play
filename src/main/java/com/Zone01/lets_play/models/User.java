@@ -30,6 +30,7 @@ public class User {
 
     private String role;
 
+
     public String getEmail() {
         return email;
     }

@@ -47,8 +47,14 @@ public class RegistrationController { // renommé depuis authController pour év
             }
 
             if (user.getRole() == null || user.getRole().isBlank()) {
-                user.setRole("USER");
-                log.debug("[REGISTER] No role provided. Defaulting to USER.");
+                user.setRole("ROLE_USER");
+                log.debug("[REGISTER] No role provided. Defaulting to ROLE_USER.");
+            } else {
+                // Add ROLE_ prefix if not already present
+                if (!user.getRole().startsWith("ROLE_")) {
+                    user.setRole("ROLE_" + user.getRole());
+                    log.debug("[REGISTER] Added ROLE_ prefix. Role is now: {}", user.getRole());
+                }
             }
 
             String rawPassword = user.getPassword();

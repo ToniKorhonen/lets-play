@@ -29,8 +29,11 @@
         <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color:red"></div>
     </div>
     <div>
-        <label>Role (optional)</label><br/>
-        <input type="text" th:field="*{role}" placeholder="USER or ADMIN" />
+        <label>Role</label><br/>
+        <select th:field="*{role}">
+            <option value="USER">User</option>
+            <option value="ADMIN">Admin</option>
+        </select>
         <div th:if="${#fields.hasErrors('role')}" th:errors="*{role}" style="color:red"></div>
     </div>
     <div style="margin-top:10px;">
