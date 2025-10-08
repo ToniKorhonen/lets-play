@@ -65,6 +65,19 @@ public class UserService {
     }
 
     @Transactional
+    public UserResponse update(String id, UpdateProfileRequest req) {
+        User u = find(id);
+        if (req.name() != null && !req.name().isBlank()) {
+            u.setName(sanitize(req.name()));
+        }
+        if (req.password() != null && !req.password().isBlank()) {
+            u.setPassword(encoder.encode(req.password()));
+        }
+        repo.save(u);
+        return toResponse(u);
+    }
+
+    @Transactional
     public void delete(String id) {
         User u = find(id);
         // DELETE CASCADE - supprimer tous les produits de l'utilisateur

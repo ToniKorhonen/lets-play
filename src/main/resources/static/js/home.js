@@ -5,6 +5,87 @@ const currentUserData = window.currentUser || null;
 const csrfToken = window.csrfToken || null;
 const csrfHeader = window.csrfHeader || null;
 
+// Toggle profile form visibility
+function toggleProfileForm() {
+    const container = document.getElementById('profile-form-container');
+    const icon = document.getElementById('toggle-icon');
+    if (container && icon) {
+        container.classList.toggle('open');
+        icon.classList.toggle('open');
+    }
+}
+
+// Handle update profile form submission
+document.addEventListener('DOMContentLoaded', function() {
+    const updateForm = document.getElementById('update-profile-form');
+    if (updateForm) {
+        updateForm.addEventListener('submit', handleUpdateProfile);
+    }
+});
+
+async function handleUpdateProfile(event) {
+    event.preventDefault();
+    const nameInput = document.getElementById('update-name');
+    const passwordInput = document.getElementById('update-password');
+    const name = nameInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    if (!name && !password) {
+        showMessage('Please provide at least a name or password to update', true);
+        return;
+    }
+
+    // Validation de la sécurité du mot de passe
+    if (password) {
+        if (password.length < 8) {
+            showMessage('Password must be at least 8 characters', true);
+            return;
+        }
+        // Vérifier qu'il contient au moins un chiffre
+        if (!/\d/.test(password)) {
+            showMessage('Password must contain at least one number', true);
+            return;
+        }
+        // Vérifier qu'il contient au moins un caractère spécial
+        if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+            showMessage('Password must contain at least one special character', true);
+            return;
+        }
+    }
+
+    try {
+        const requestBody = {};
+        if (name) {
+            requestBody.name = name;
+        }
+        if (password) {
+            requestBody.password = password;
+        }
+
+        const response = await fetch('/web/update-profile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        if (response.ok) {
+            showMessage('Profile updated successfully! Refreshing page...', false);
+            nameInput.value = '';
+            passwordInput.value = '';
+            window.location.reload();
+        } else {
+            const error = await response.json().catch(() => ({ message: 'Failed to update profile' }));
+            throw new Error(error.error || error.message || 'Failed to update profile');
+        }
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        showMessage('Error: ' + error.message, true);
+    }
+}
+
 async function confirmDeleteAccount() {
     if (!currentUserData || !currentUserData.id) {
         showMessage('User information not available. Please refresh the page.', true);
@@ -46,4 +127,3 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
-

@@ -28,6 +28,67 @@
         .btn-delete-account:hover {
             background-color: #d32f2f;
         }
+        .update-profile-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e3f2fd;
+            border: 1px solid #2196F3;
+            border-radius: 8px;
+        }
+        .update-profile-section h3 {
+            color: #1976d2;
+            margin-top: 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .update-profile-section h3:hover {
+            color: #0d47a1;
+        }
+        .toggle-icon {
+            font-size: 20px;
+            transition: transform 0.3s;
+        }
+        .toggle-icon.open {
+            transform: rotate(180deg);
+        }
+        .profile-form-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .profile-form-container.open {
+            max-height: 500px;
+            margin-top: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .btn-update {
+            background-color: #2196F3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-update:hover {
+            background-color: #1976d2;
+        }
         #message-container {
             margin: 20px 0;
         }
@@ -69,6 +130,28 @@
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <button type="submit">Logout</button>
     </form>
+
+    <!-- Update Profile Section (only if user data is available) -->
+    <div th:if="${currentUser != null}" class="update-profile-section">
+        <h3 onclick="toggleProfileForm()">
+            📝 Update Profile
+            <span class="toggle-icon" id="toggle-icon">▼</span>
+        </h3>
+        <div id="profile-form-container" class="profile-form-container">
+            <form id="update-profile-form">
+                <div class="form-group">
+                    <label for="update-name">Name (leave empty to keep current):</label>
+                    <input type="text" id="update-name" name="name" placeholder="Current name will be kept if empty" />
+                </div>
+                <div class="form-group">
+                    <label for="update-password">New Password (leave empty to keep current):</label>
+                    <input type="password" id="update-password" name="password" minlength="8" placeholder="Password" />
+                    <small style="color: #666;">Min 8 chars, include a number & special char.</small>
+                </div>
+                <button type="submit" class="btn-update">Update Profile</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Delete Account Section (only if user data is available) -->
     <div th:if="${currentUser != null}" class="delete-account-section">
