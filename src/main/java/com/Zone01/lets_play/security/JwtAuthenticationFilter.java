@@ -14,16 +14,16 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     private final JwtService jwtService;
-    private final UserRepository userRepository;
 
     public JwtAuthenticationFilter(JwtService jwtService, UserRepository userRepository) {
         this.jwtService = jwtService;
-        this.userRepository = userRepository;
     }
 
     @Override
@@ -36,13 +36,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Claims claims = jwtService.parseToken(token);
                 String email = claims.getSubject();
                 String role = claims.get("role", String.class);
-                String id = claims.get("id", String.class);
 
                 if (email != null && role != null) {
+                    // Role in JWT is stored without ROLE_ prefix (e.g., "USER", "ADMIN")
+                    // Spring Security needs ROLE_ prefix
+                    String normalizedRole = role.replace("ROLE_", "").toUpperCase();
                     UserDetails userDetails = org.springframework.security.core.userdetails.User
                             .withUsername(email)
                             .password("")
-                            .authorities(new SimpleGrantedAuthority("ROLE_" + role))
+                            .authorities(new SimpleGrantedAuthority("ROLE_" + normalizedRole))
                             .build();
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
@@ -50,10 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             } catch (Exception e) {
-                // Log the exception for debugging
-                System.err.println("JWT Authentication failed: " + e.getMessage());
-                e.printStackTrace();
-                // Clear any partial authentication
+                log.error("JWT Authentication failed: {}", e.getMessage());
                 SecurityContextHolder.clearContext();
             }
         }

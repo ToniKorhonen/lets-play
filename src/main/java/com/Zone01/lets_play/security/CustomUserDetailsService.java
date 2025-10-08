@@ -31,7 +31,11 @@ public class CustomUserDetailsService implements UserDetailsService {
             log.warn("[LOGIN] User not found for email='{}'", email);
             throw new UsernameNotFoundException("User not found");
         }
+        // Role is stored without ROLE_ prefix (e.g., "USER", "ADMIN")
+        // Spring Security expects ROLE_ prefix in authorities
         String role = (u.getRole() == null || u.getRole().isBlank()) ? "USER" : u.getRole().toUpperCase();
+        // Remove ROLE_ prefix if already present, then add it
+        role = role.replace("ROLE_", "");
         List<GrantedAuthority> auth = List.of(new SimpleGrantedAuthority("ROLE_" + role));
         log.debug("[LOGIN] User loaded: id={}, email={}, role={}", u.getId(), u.getEmail(), role);
         return org.springframework.security.core.userdetails.User

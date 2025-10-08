@@ -43,6 +43,57 @@
             background-color: #e8f5e9;
             border-radius: 4px;
         }
+        .admin-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e3f2fd;
+            border: 1px solid #2196F3;
+            border-radius: 8px;
+        }
+        .admin-section h3 {
+            color: #1976d2;
+            margin-top: 0;
+        }
+        .btn-admin {
+            background-color: #2196F3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-admin:hover {
+            background-color: #1976d2;
+        }
+        #users-list {
+            margin-top: 20px;
+        }
+        .user-card {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .user-card .role-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .user-card .role-admin {
+            background-color: #ff9800;
+            color: white;
+        }
+        .user-card .role-user {
+            background-color: #4caf50;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -69,6 +120,19 @@
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <button type="submit">Logout</button>
     </form>
+
+    <!-- Admin Section (only for ADMIN role) -->
+    <div th:if="${currentUser != null && currentUser.role == 'ADMIN'}" class="admin-section">
+        <h3>🔧 Admin Controls</h3>
+        <p>As an administrator, you have access to advanced features:</p>
+        <button class="btn-admin" onclick="loadAllUsers()">View All Users</button>
+        <button class="btn-admin" onclick="refreshUsers()" style="display:none;" id="refreshUsersBtn">Refresh Users</button>
+
+        <div id="users-list" style="display:none;">
+            <h4>All Users</h4>
+            <div id="users-container">Loading...</div>
+        </div>
+    </div>
 
     <!-- Delete Account Section (only if user data is available) -->
     <div th:if="${currentUser != null}" class="delete-account-section">

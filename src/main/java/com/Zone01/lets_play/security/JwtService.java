@@ -19,10 +19,12 @@ public class JwtService {
     private final Key signingKey = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
 
     public String generateToken(User user) {
+        // Normalize role: remove ROLE_ prefix if present, store only USER/ADMIN
+        String role = user.getRole() != null ? user.getRole().replace("ROLE_", "").toUpperCase() : "USER";
         return Jwts.builder()
                 .setSubject(user.getEmail())
                 .claim("id", user.getId())
-                .claim("role", user.getRole())
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .signWith(signingKey, SignatureAlgorithm.HS256)

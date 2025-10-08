@@ -46,15 +46,18 @@ public class RegistrationController { // renommé depuis authController pour év
                 return "register";
             }
 
+            // Normalize role: store without ROLE_ prefix, default to USER
             if (user.getRole() == null || user.getRole().isBlank()) {
-                user.setRole("ROLE_USER");
-                log.debug("[REGISTER] No role provided. Defaulting to ROLE_USER.");
+                user.setRole("USER");
+                log.debug("[REGISTER] No role provided. Defaulting to USER.");
             } else {
-                // Add ROLE_ prefix if not already present
-                if (!user.getRole().startsWith("ROLE_")) {
-                    user.setRole("ROLE_" + user.getRole());
-                    log.debug("[REGISTER] Added ROLE_ prefix. Role is now: {}", user.getRole());
+                // Remove ROLE_ prefix if present and normalize
+                String role = user.getRole().replace("ROLE_", "").toUpperCase();
+                if (!role.equals("USER") && !role.equals("ADMIN")) {
+                    role = "USER"; // Default to USER for invalid roles
                 }
+                user.setRole(role);
+                log.debug("[REGISTER] Role normalized to: {}", user.getRole());
             }
 
             String rawPassword = user.getPassword();
@@ -70,7 +73,7 @@ public class RegistrationController { // renommé depuis authController pour év
             log.debug("[REGISTER] Password encoded for email='{}'", user.getEmail());
 
             userRepository.save(user);
-            log.info("[REGISTER] User successfully saved to MongoDB: id={}, email={}", user.getId(), user.getEmail());
+            log.info("[REGISTER] User successfully saved to MongoDB: id={}, email={}, role={}", user.getId(), user.getEmail(), user.getRole());
             return "redirect:/login?registered";
         } catch (DuplicateKeyException dk) {
             // Handles race condition with unique index or direct duplicate insertion
