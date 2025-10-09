@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import jakarta.annotation.security.PermitAll;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -24,6 +25,7 @@ public class AuthController {
         this.jwtService = jwtService;
     }
 
+    @PermitAll
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest req) {
         User user = userRepository.findByEmail(req.email());
@@ -34,4 +36,3 @@ public class AuthController {
         return ResponseEntity.ok(new LoginResponse(token));
     }
 }
-
